@@ -49,16 +49,13 @@ categories:
 1. 输入正确的验证码，抓取请求包。
 2. 发送至 `Intruder`，**关键操作**：仅将 `password` 设为爆破点 `§`，保留正确的 `vcode` 和 `Cookie`。
 
-<!-- 在这里插入你固定了 vcode 的抓包截图 -->
-![第二关-固定vcode抓包](请将图片拖拽到此处-3.png)
-
-3. 加载密码字典进行爆破。
+![第二关-固定vcode抓包]![pikachu-bruteforce-2026-11-07-12-06-52](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-06-52.png)
+1. 加载密码字典进行爆破。
 
 ### 3. 结果分析
 密码 `123456` 的返回长度（`35347`）与错误密码（`35372`）不同。
 
-<!-- 在这里插入第二关 Intruder 爆破结果截图 -->
-![第二关-爆破结果](请将图片拖拽到此处-4.png)
+![第二关-爆破结果]![pikachu-bruteforce-2026-11-07-12-07-31](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-07-31.png)
 
 **漏洞成因**：服务端验证验证码正确后，**没有立即销毁 Session 中的验证码**。只要不刷新页面，该验证码可被无限次重放使用。
 
@@ -72,16 +69,14 @@ categories:
 ### 2. 测试过程
 1. 抓包后，在请求体中**直接删掉 `vcode` 参数**。
 
-<!-- 在这里插入你删掉 vcode 参数的抓包截图 -->
-![第三关-删除vcode参数](请将图片拖拽到此处-5.png)
+![第三关-删除vcode参数]![pikachu-bruteforce-2026-11-07-12-10-00](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-10-00.png)
 
-2. 发送至 `Intruder`，仅对 `password` 字段进行爆破。
+1. 发送至 `Intruder`，仅对 `password` 字段进行爆破。
 
 ### 3. 结果分析
 密码 `123456` 的返回长度（`36559`）显著短于其他（`36584`）。
 
-<!-- 在这里插入第三关 Intruder 爆破结果截图 -->
-![第三关-爆破结果](请将图片拖拽到此处-6.png)
+![第三关-爆破结果]![pikachu-bruteforce-2026-11-07-12-10-28](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-10-28.png)
 
 **漏洞成因**：前端验证永远不可信！服务端 PHP 代码根本没有校验验证码。使用 Burp 直接绕过前端 JS 发送请求即可。
 
@@ -96,25 +91,25 @@ categories:
 使用 `Pitchfork` 模式 + `Recursive grep` 实现自动化：
 1. **双参数爆破**：`Positions` 中给 `password` 和 `token` 的值分别加 `§`。
 
-<!-- 在这里插入你标记了两个爆破点的 Positions 截图 -->
-![第四关-双参数标记](请将图片拖拽到此处-7.png)
+![第四关-双参数标记]![pikachu-bruteforce-2026-11-07-12-11-58](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-11-58.png)
 
-2. **Payload 1 (密码)**：加载简单字典。
-3. **Payload 2 (动态 Token)**：选择 `Recursive grep`。在 `Settings` -> `Grep - Extract` 中添加正则：`name="token" value="(.*?)"`。
+1. **Payload 1 (密码)**：加载简单字典。
+2. **Payload 2 (动态 Token)**：选择 `Recursive grep`。在 `Settings` -> `Grep - Extract` 中添加正则：`name="token" value="(.*?)"`。
 
 <!-- 在这里插入你配置正则提取 Token 的截图 -->
-![第四关-正则提取Token配置](请将图片拖拽到此处-8.png)
+![第四关-正则提取Token配置]![pikachu-bruteforce-2026-11-07-12-12-54](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-12-54.png)
+![pikachu-bruteforce-2026-11-07-12-13-30](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-13-30.png)
 
-4. **单线程限制**：在 `Resource pool` 中新建池子，将 `Maximum concurrent requests` 设为 **`1`**。
+1. **单线程限制**：在 `Resource pool` 中新建池子，将 `Maximum concurrent requests` 设为 **`1`**。
 
 <!-- 在这里插入你设置单线程的截图 -->
-![第四关-单线程设置](请将图片拖拽到此处-9.png)
+![第四关-单线程设置]![pikachu-bruteforce-2026-11-07-12-13-45](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-13-45.png)
 
 ### 3. 结果分析
 爆破结果显示，携带空 Token 的首个请求长度为 `34882`；正确密码 **`123456`** 的响应长度最短（**`34857`**），而其他错误密码（如 `admin`）长度为 `34902`。
 
 <!-- 在这里插入第四关最终爆破结果的截图 -->
-![第四关-最终爆破结果](请将图片拖拽到此处-10.png)
+![第四关-最终爆破结果]![pikachu-bruteforce-2026-11-07-12-14-04](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/pikachu-bruteforce-2026-11-07-12-14-04.png)
 
 成功验证并登录。
 **漏洞成因**：虽然使用了动态 Token，但服务端未限制请求频率。攻击者可通过工具自动提取并替换 Token，依然可以实现自动化爆破。
