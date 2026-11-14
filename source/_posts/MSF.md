@@ -75,7 +75,7 @@ Kali成功接收到反弹连接，获得 `Meterpreter` 会话。执行 `sysinfo`
 ![MSF-2026-11-14-14-29-29](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/MSF-2026-11-14-14-29-29.png)
 > *图注：蚁剑成功连接，获取 WWW 目录的文件列表*
 
-为了进一步验证权限，右键打开虚拟终端。执行 `whoami` 命令，虽然因终端编码问题存在部分乱码，但上方的基础信息面板直接回显了当前路径（`D:/phpstudy_pro/WWW`）、系统信息（`Windows NT ...`）以及当前用户（`茹纬`），证明已完全控制该Web服务器。
+为了进一步验证权限，右键打开虚拟终端。执行 `whoami` 命令，虽然因终端编码问题存在部分乱码，但上方的基础信息面板直接回显了当前路径（`D:/phpstudy_pro/WWW`）、系统信息（`Windows NT ...`），证明已完全控制该Web服务器。
 
 ![MSF-2026-11-14-14-42-48](https://cdn.jsdelivr.net/gh/ThatCryptoCod/blog-images@main/img/${mdFileName}/MSF-2026-11-14-14-42-48.png)
 > *图注：通过虚拟终端执行 whoami，获取当前系统用户信息*
