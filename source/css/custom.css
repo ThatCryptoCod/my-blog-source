@@ -1,0 +1,49 @@
+/* ==========================================================
+   真·MC粉色玻璃（完美立体阴影版）
+   ========================================================== */
+
+#recent-posts > .recent-post-item,
+.card-widget {
+  border-radius: 0 !important;
+  position: relative;
+  
+  /* ① 背景图保持你的原版，用 64px 平铺 */
+  background-image: url('/img/mc-pink.png') !important;
+  background-size: 140px 140px !important; 
+  background-repeat: repeat !important; 
+  background-color: #f7b4cc !important;
+  
+  /* ② 核心修复：把白框改成 border，这样它才会向外推 */
+  border: 6px solid #ffffff !important;
+  
+  /* ③ 阴影堆叠：内部画深粉框，外部画灰黑立体阴影 */
+  box-shadow: 
+    /* --- 内部层级 --- */
+    inset 0 0 0 4px #b96581,      /* 深色内边框 */
+    inset 4px 4px 0 0 #ffcce0,    /* 内侧左上高光 */
+    inset -4px -4px 0 0 #d4849d,  /* 内侧右下暗影 */
+    
+    /* --- 外部层级 --- */
+    10px 10px 0 0 #d1d5db !important; /* 调大了一点偏移，确保灰黑阴影明显 */
+    
+  /* 必须强制像素渲染 */
+  image-rendering: pixelated !important;
+  image-rendering: crisp-edges !important;
+  transition: none !important;
+}
+
+/* 让内部文字留点呼吸空间 */
+#recent-posts > .recent-post-item > .recent-post-info,
+.card-widget > .item-headline,
+.card-widget > .card-content {
+  padding: 10px !important;
+}
+
+/* 内部图片像素化 */
+#recent-posts > .recent-post-item img,
+.card-widget img,
+#recent-posts > .recent-post-item .post_cover {
+  border-radius: 0 !important;
+  image-rendering: pixelated !important;
+  image-rendering: crisp-edges !important;
+}
