@@ -1128,3 +1128,59 @@ CDN:
     # valine:
     # waline_css:
     # waline_js:
+# ========== 顶部轮播图 & 右侧推荐卡片 ==========
+recommend:
+  enable: true
+  priority: 5
+  enable_page: /
+  layout:
+    type: id
+    name: content-inner
+    index: 1
+  banner:
+    # 【待修改】这里是你首页最左边那个大大的标题，比如截图里的“人的身后，总有屁股”
+    title: '广告位招租中' 
+    # 【待修改】这里是标题旁边的小图标，如果你暂时没想好，可以先把下面两行删掉或者注释掉
+    skill:
+      - name: 'Html'
+        icon: 'fa-brands fa-html5'
+        color: '#fff'
+        background: '#e9572b'
+  post:
+    cover:
+      enable: true
+      # 【待修改】鼠标悬停时右侧弹出的默认推荐文章。你需要填一篇你博客里存在的文章的链接路径。
+      # 比如你的文章在 http://localhost:4000/2026/10/03/hello-world/，这里就填 '2026/10/03/hello-world'
+      #path: '2026/10/03/hello-world' 
+      # 【待修改】推荐卡片的默认背景图。你可以放一张图在 source/img/ 下，这里写成 '/img/你的图.png'
+      #img: '/img/cover_default.png' 
+      #title: '推荐阅读'
+      #subTitle: '点击查看更多'
+  category:
+    # 【待修改】这是横幅下方的按钮，可以加多个。name 是显示的字，path 是跳转的分类路径。
+    - name: '还没想好1'
+      path: 'categories/还没想好1'
+      icon: 'fa-solid fa-star'
+      color: '#358bff'
+
+# ========== 首页底部彩色分类卡片 ==========
+categoryBar:
+  enable: true
+  priority: 5
+  enable_page: /
+  layout:
+    type: id
+    name: recent-posts
+    index: 0
+  column: odd # odd：3列 | even：4列
+  row: 1 # 显示行数
+  message:
+    # 【重要！待修改】这里的 descr 必须跟你文章里写的 categories 名字一模一样！
+    # 如果名字对不上，点进去就会是 404 报错。
+    - descr: 网络安全 # 改成你真实的分类名
+      # 背景图可以换成你自己的链接
+      cover: https://npm.elemecdn.com/akilar-candyassets/image/cover1.webp 
+    - #descr: 靶场通关 # 改成你真实的分类名
+      #cover: https://npm.elemecdn.com/akilar-candyassets/image/cover2.webp
+    - #descr: 学习笔记 # 改成你真实的分类名
+      #cover: https://npm.elemecdn.com/akilar-candyassets/image/cover3.webp
