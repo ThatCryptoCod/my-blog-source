@@ -1,49 +1,175 @@
 /* ==========================================================
-   真·MC粉色玻璃（完美立体阴影版）
+   1. 真·MC粉色玻璃 + 悬浮
    ========================================================== */
 
 #recent-posts > .recent-post-item,
 .card-widget {
   border-radius: 0 !important;
   position: relative;
-  
-  /* ① 背景图保持你的原版，用 64px 平铺 */
+
   background-image: url('/img/mc-pink.png') !important;
-  background-size: 140px 140px !important; 
-  background-repeat: repeat !important; 
+  background-size: 140px 140px !important;
+  background-repeat: repeat !important;
   background-color: #f7b4cc !important;
-  
-  /* ② 核心修复：把白框改成 border，这样它才会向外推 */
+
   border: 6px solid #ffffff !important;
-  
-  /* ③ 阴影堆叠：内部画深粉框，外部画灰黑立体阴影 */
-  box-shadow: 
-    /* --- 内部层级 --- */
-    inset 0 0 0 4px #b96581,      /* 深色内边框 */
-    inset 4px 4px 0 0 #ffcce0,    /* 内侧左上高光 */
-    inset -4px -4px 0 0 #d4849d,  /* 内侧右下暗影 */
-    
-    /* --- 外部层级 --- */
-    10px 10px 0 0 #d1d5db !important; /* 调大了一点偏移，确保灰黑阴影明显 */
-    
-  /* 必须强制像素渲染 */
+
+  box-shadow:
+    inset 0 0 0 4px #b96581,
+    inset 4px 4px 0 0 #ffcce0,
+    inset -4px -4px 0 0 #d4849d,
+    10px 10px 0 0 #d1d5db !important;
+
   image-rendering: pixelated !important;
   image-rendering: crisp-edges !important;
   transition: none !important;
+
+  animation: mc-glass-float 3.4s ease-in-out infinite;
 }
 
-/* 让内部文字留点呼吸空间 */
+#recent-posts > .recent-post-item:nth-child(2n),
+.card-widget:nth-child(2n) {
+  animation-delay: -1.1s;
+}
+
+#recent-posts > .recent-post-item:nth-child(3n),
+.card-widget:nth-child(3n) {
+  animation-delay: -2.2s;
+}
+
+@keyframes mc-glass-float {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -6px; }
+}
+
 #recent-posts > .recent-post-item > .recent-post-info,
 .card-widget > .item-headline,
 .card-widget > .card-content {
   padding: 10px !important;
 }
 
-/* 内部图片像素化 */
 #recent-posts > .recent-post-item img,
 .card-widget img,
 #recent-posts > .recent-post-item .post_cover {
   border-radius: 0 !important;
   image-rendering: pixelated !important;
   image-rendering: crisp-edges !important;
+}
+
+/* ==========================================================
+   2. 悬停互动：玻璃块被“拿起来”
+   ========================================================== */
+
+#recent-posts > .recent-post-item,
+.card-widget {
+  transition:
+    transform 0.28s cubic-bezier(.2, .9, .25, 1),
+    box-shadow 0.28s cubic-bezier(.2, .9, .25, 1) !important;
+}
+
+#recent-posts > .recent-post-item:hover,
+.card-widget:hover {
+  animation-play-state: paused;        /* 按住：暂停上下浮动 */
+  transform: translateY(-10px);        /* 抬起来 */
+  box-shadow:
+    inset 0 0 0 4px #b96581,
+    inset 4px 4px 0 0 #ffcce0,
+    inset -4px -4px 0 0 #d4849d,
+    10px 20px 0 0 #d1d5db !important;  /* 阴影留在原地 */
+}
+
+/* ==========================================================
+   3. 钻石剑光标
+   ========================================================== */
+
+html.mc-sword-on,
+html.mc-sword-on * {
+  cursor: none !important;
+}
+
+html.mc-sword-on input,
+html.mc-sword-on textarea,
+html.mc-sword-on [contenteditable="true"] {
+  cursor: text !important;
+}
+
+.mc-sword-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  z-index: 2147483647;
+  pointer-events: none;
+  background: url('/img/diamond_sword.png') center / contain no-repeat;
+  image-rendering: pixelated;
+  opacity: 0;
+  will-change: transform;
+}
+
+.mc-sword-cursor.is-visible  { opacity: 1; }
+.mc-sword-cursor.is-swinging { opacity: 0; }
+
+/* ==========================================================
+   4. 劈砍 + 残影拖尾
+   ========================================================== */
+
+.sword-slash-container {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow: hidden;
+  pointer-events: none;
+
+  --hilt-x: 82%;
+  --hilt-y: 50%;
+}
+
+.sword-slash,
+.sword-slash-ghost {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  background: url('/img/diamond_sword.png') center / contain no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+  transform-origin: var(--hilt-x) var(--hilt-y);
+}
+
+.sword-slash {
+  opacity: 0;
+  animation: sword-slash-130 0.4s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.sword-slash-ghost {
+  opacity: 0;
+  filter: grayscale(1) brightness(1.6);
+  animation: sword-ghost-fade 0.2s linear forwards;
+  will-change: opacity;
+}
+
+@keyframes sword-slash-130 {
+  0%   { transform: rotate(0deg)    scale(1);    opacity: 1; }
+  15%  { transform: rotate(-12deg)  scale(1.08); opacity: 1; }
+  60%  { transform: rotate(-90deg)  scale(1.18); opacity: 1; }
+  100% { transform: rotate(-130deg) scale(1);    opacity: 0; }
+}
+
+@keyframes sword-ghost-fade {
+  from { opacity: .22; }
+  to   { opacity: 0; }
+}
+
+/* ==========================================================
+   5. 减少动态效果
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  #recent-posts > .recent-post-item,
+  .card-widget {
+    animation: none !important;
+  }
 }
