@@ -1,4 +1,13 @@
 /* ==========================================================
+   0. 剑柄位置（鼠标光标和特效共用）
+   ========================================================== */
+
+:root {
+  --hilt-x: 82%;
+  --hilt-y: 76%;
+}
+
+/* ==========================================================
    1. 真·MC粉色玻璃 + 悬浮
    ========================================================== */
 
@@ -105,14 +114,17 @@ html.mc-sword-on [contenteditable="true"] {
   background: url('/img/diamond_sword.png') center / contain no-repeat;
   image-rendering: pixelated;
   opacity: 0;
-  will-change: transform;
+  can-rotate: 1;                 /* 无意义占位，兼容旧解析器 */
+  transform-origin: var(--hilt-x) var(--hilt-y);
+  transition: rotate 0.18s ease;
+  will-change: transform, rotate;
 }
 
 .mc-sword-cursor.is-visible  { opacity: 1; }
 .mc-sword-cursor.is-swinging { opacity: 0; }
 
 /* ==========================================================
-   4. 左键劈砍 + 残影
+   4. 左键三段连击 + 残影
    ========================================================== */
 
 .sword-slash-container {
@@ -122,16 +134,15 @@ html.mc-sword-on [contenteditable="true"] {
   overflow: hidden;
   pointer-events: none;
 
-  /* 剑柄位置 */
-  --hilt-x: 82%;
-  --hilt-y: 76%;
-
-  /* 剑尖相对剑柄的方向与长度：火焰沿这条线烧过去 */
+  /* 剑尖相对剑柄的方向与长度 */
   --blade-angle: -137deg;
   --blade-len: 46px;
 
-  /* 右键举剑时，剑尖转到正上方所需的角度 */
+  /* 右键举剑：剑尖转到正上方 */
   --block-angle: calc(-90deg - var(--blade-angle));
+
+  /* 第三段突刺：剑转到水平（朝左） */
+  --thrust-angle: calc(-180deg - var(--blade-angle));
 }
 
 .sword-slash,
@@ -149,7 +160,6 @@ html.mc-sword-on [contenteditable="true"] {
 
 .sword-slash {
   opacity: 0;
-  animation: sword-slash-combo 0.52s ease-in-out forwards;
   will-change: transform, opacity;
 }
 
@@ -160,12 +170,30 @@ html.mc-sword-on [contenteditable="true"] {
   will-change: opacity;
 }
 
-@keyframes sword-slash-combo {
+/* 第一段：下劈，收在 -130° */
+@keyframes sword-slash-1 {
   0%   { transform: rotate(0deg)    scale(1);    opacity: 1; }
   16%  { transform: rotate(30deg)   scale(1.04); opacity: 1; }
   24%  { transform: rotate(30deg)   scale(1.06); opacity: 1; }
-  70%  { transform: rotate(-100deg) scale(1.18); opacity: 1; }
-  100% { transform: rotate(-100deg) scale(1);    opacity: 0; }
+  70%  { transform: rotate(-130deg) scale(1.18); opacity: 1; }
+  100% { transform: rotate(-130deg) scale(1);    opacity: 0; }
+}
+
+/* 第二段：从 -130° 起手，向上 150° 到 +20° */
+@keyframes sword-slash-2 {
+  0%   { transform: rotate(-130deg) scale(1);    opacity: 1; }
+  12%  { transform: rotate(-130deg) scale(1.05); opacity: 1; }
+  72%  { transform: rotate(20deg)   scale(1.18); opacity: 1; }
+  100% { transform: rotate(20deg)   scale(1);    opacity: 0; }
+}
+
+/* 第三段：从 +20° 起手，转水平向左突刺 */
+@keyframes sword-slash-3 {
+  0%   { transform: rotate(20deg) scale(1); opacity: 1; }
+  18%  { transform: translate(12px, 0) rotate(20deg) scale(0.9); opacity: 1; }
+  55%  { transform: translate(-64px, 0) rotate(var(--thrust-angle)) scale(1.06); opacity: 1; }
+  72%  { transform: translate(-64px, 0) rotate(var(--thrust-angle)) scale(1.06); opacity: 1; }
+  100% { transform: translate(-64px, 0) rotate(var(--thrust-angle)) scale(1); opacity: 0; }
 }
 
 @keyframes sword-ghost-fade {
@@ -182,21 +210,19 @@ html.mc-sword-on [contenteditable="true"] {
   animation: sword-block 0.38s ease-out forwards;
   will-change: transform, opacity;
 
-  /* 剑身火焰辉光 */
   filter:
     drop-shadow(0 0 6px #ff8a00)
     drop-shadow(0 0 16px rgba(255, 64, 0, .55));
 }
 
-/* 举剑：剑尖竖直朝上，由 --block-angle 控制 */
+/* 从当前收势角度起手，转到竖直 */
 @keyframes sword-block {
-  0%   { transform: rotate(0deg) scale(1); opacity: 1; }
+  0%   { transform: rotate(var(--from-angle, 0deg)) scale(1); opacity: 1; }
   22%  { transform: rotate(var(--block-angle)) scale(1.1); opacity: 1; }
   70%  { transform: rotate(var(--block-angle)) scale(1.1); opacity: 1; }
   100% { transform: rotate(var(--block-angle)) scale(1); opacity: 0; }
 }
 
-/* 火焰粒子，每个带一圈同色辉光 */
 .mc-spark {
   position: absolute;
   width: var(--s, 4px);
@@ -213,7 +239,6 @@ html.mc-sword-on [contenteditable="true"] {
   to   { transform: translate(var(--dx, 0px), var(--dy, 0px)); opacity: 0; }
 }
 
-/* 点火 / 爆燃的方形闪光 */
 .mc-flash {
   position: absolute;
   width: var(--f, 40px);
