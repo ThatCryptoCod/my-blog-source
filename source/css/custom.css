@@ -69,13 +69,13 @@
 
 #recent-posts > .recent-post-item:hover,
 .card-widget:hover {
-  animation-play-state: paused;        /* 按住：暂停上下浮动 */
-  transform: translateY(-10px);        /* 抬起来 */
+  animation-play-state: paused;
+  transform: translateY(-10px);
   box-shadow:
     inset 0 0 0 4px #b96581,
     inset 4px 4px 0 0 #ffcce0,
     inset -4px -4px 0 0 #d4849d,
-    10px 20px 0 0 #d1d5db !important;  /* 阴影留在原地 */
+    10px 20px 0 0 #d1d5db !important;
 }
 
 /* ==========================================================
@@ -122,8 +122,9 @@ html.mc-sword-on [contenteditable="true"] {
   overflow: hidden;
   pointer-events: none;
 
+  /* 旋转中心：剑柄。往下挪过了，82% 76% */
   --hilt-x: 82%;
-  --hilt-y: 50%;
+  --hilt-y: 76%;
 }
 
 .sword-slash,
@@ -140,7 +141,7 @@ html.mc-sword-on [contenteditable="true"] {
 
 .sword-slash {
   opacity: 0;
-  animation: sword-slash-130 0.4s ease-out forwards;
+  animation: sword-slash-combo 0.52s ease-in-out forwards;
   will-change: transform, opacity;
 }
 
@@ -151,11 +152,13 @@ html.mc-sword-on [contenteditable="true"] {
   will-change: opacity;
 }
 
-@keyframes sword-slash-130 {
+/* 0° → +30°（顺时针预备）→ -100°（逆时针挥 130°） */
+@keyframes sword-slash-combo {
   0%   { transform: rotate(0deg)    scale(1);    opacity: 1; }
-  15%  { transform: rotate(-12deg)  scale(1.08); opacity: 1; }
-  60%  { transform: rotate(-90deg)  scale(1.18); opacity: 1; }
-  100% { transform: rotate(-130deg) scale(1);    opacity: 0; }
+  16%  { transform: rotate(30deg)   scale(1.04); opacity: 1; }
+  24%  { transform: rotate(30deg)   scale(1.06); opacity: 1; }
+  70%  { transform: rotate(-100deg) scale(1.18); opacity: 1; }
+  100% { transform: rotate(-100deg) scale(1);    opacity: 0; }
 }
 
 @keyframes sword-ghost-fade {

@@ -1,11 +1,11 @@
 /* ==========================================================
-   钻石剑光标 + 130° 劈砍 + 残影拖尾
+   钻石剑光标 + 预备30° + 逆时针130° + 残影拖尾
    文章页自动关闭
    ========================================================== */
 (() => {
   'use strict';
 
-  const SWING_MS   = 400;
+  const SWING_MS   = 520;   // 和 CSS 的 0.52s 一致
   const GHOST_STEP = 20;
   const GHOST_LIFE = 220;
 
@@ -16,7 +16,6 @@
     return Math.atan2(m.b, m.a) * 180 / Math.PI;
   };
 
-  /* 正文页判定：是文章就关掉钻石剑，方便阅读 */
   const isArticlePage = () => {
     if (document.body.classList.contains('post')) return true;
     if (document.querySelector('meta[property="og:type"][content="article"]')) return true;
@@ -40,14 +39,11 @@
       document.body.appendChild(cursor);
     }
 
-    /* 根据当前页面切换开 / 关 */
     const syncMode = () => {
       const next = finePointer && !isArticlePage();
       if (next === enabled) return;
 
       enabled = next;
-
-      // 关掉时移出 mc-sword-on，系统指针立刻恢复
       document.documentElement.classList.toggle('mc-sword-on', enabled);
 
       if (!enabled && cursor) {
@@ -58,7 +54,6 @@
 
     syncMode();
 
-    // 兼容 pjax / 无刷新跳转
     ['pjax:complete', 'pjax:end', 'pjax:success'].forEach((name) => {
       document.addEventListener(name, syncMode);
     });
@@ -78,7 +73,6 @@
     };
 
     document.addEventListener('pointermove', (e) => {
-      // 每 600ms 重新判定一次，防止 pjax 事件没触发
       const now = performance.now();
       if (now - lastSync > 600) {
         lastSync = now;
@@ -100,7 +94,7 @@
 
     /* ---------------- 点击：劈砍 + 残影 ---------------- */
     document.addEventListener('pointerdown', (e) => {
-      if (!enabled) return;          // 文章页：连点击特效也一并关掉
+      if (!enabled) return;
       if (e.button !== 0) return;
 
       const x = e.clientX;
