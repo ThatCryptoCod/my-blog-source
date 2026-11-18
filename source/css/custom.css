@@ -112,23 +112,31 @@ html.mc-sword-on [contenteditable="true"] {
 .mc-sword-cursor.is-swinging { opacity: 0; }
 
 /* ==========================================================
-   4. 劈砍 + 残影拖尾
+   4. 左键劈砍 + 残影
    ========================================================== */
 
 .sword-slash-container {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: 2147483646;
   overflow: hidden;
   pointer-events: none;
 
-  /* 旋转中心：剑柄。往下挪过了，82% 76% */
+  /* 剑柄位置 */
   --hilt-x: 82%;
   --hilt-y: 76%;
+
+  /* 剑尖相对剑柄的方向与长度：火焰沿这条线烧过去 */
+  --blade-angle: -137deg;
+  --blade-len: 46px;
+
+  /* 右键举剑时，剑尖转到正上方所需的角度 */
+  --block-angle: calc(-90deg - var(--blade-angle));
 }
 
 .sword-slash,
-.sword-slash-ghost {
+.sword-slash-ghost,
+.sword-block {
   position: absolute;
   width: 64px;
   height: 64px;
@@ -152,7 +160,6 @@ html.mc-sword-on [contenteditable="true"] {
   will-change: opacity;
 }
 
-/* 0° → +30°（顺时针预备）→ -100°（逆时针挥 130°） */
 @keyframes sword-slash-combo {
   0%   { transform: rotate(0deg)    scale(1);    opacity: 1; }
   16%  { transform: rotate(30deg)   scale(1.04); opacity: 1; }
@@ -167,7 +174,64 @@ html.mc-sword-on [contenteditable="true"] {
 }
 
 /* ==========================================================
-   5. 减少动态效果
+   5. 右键格挡 + 火焰螺旋
+   ========================================================== */
+
+.sword-block {
+  opacity: 0;
+  animation: sword-block 0.38s ease-out forwards;
+  will-change: transform, opacity;
+
+  /* 剑身火焰辉光 */
+  filter:
+    drop-shadow(0 0 6px #ff8a00)
+    drop-shadow(0 0 16px rgba(255, 64, 0, .55));
+}
+
+/* 举剑：剑尖竖直朝上，由 --block-angle 控制 */
+@keyframes sword-block {
+  0%   { transform: rotate(0deg) scale(1); opacity: 1; }
+  22%  { transform: rotate(var(--block-angle)) scale(1.1); opacity: 1; }
+  70%  { transform: rotate(var(--block-angle)) scale(1.1); opacity: 1; }
+  100% { transform: rotate(var(--block-angle)) scale(1); opacity: 0; }
+}
+
+/* 火焰粒子，每个带一圈同色辉光 */
+.mc-spark {
+  position: absolute;
+  width: var(--s, 4px);
+  height: var(--s, 4px);
+  background: var(--c, #fff);
+  box-shadow: 0 0 6px var(--c, #fff);
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation: mc-spark-fly var(--d, 420ms) steps(4, end) forwards;
+}
+
+@keyframes mc-spark-fly {
+  from { transform: translate(0, 0); opacity: 1; }
+  to   { transform: translate(var(--dx, 0px), var(--dy, 0px)); opacity: 0; }
+}
+
+/* 点火 / 爆燃的方形闪光 */
+.mc-flash {
+  position: absolute;
+  width: var(--f, 40px);
+  height: var(--f, 40px);
+  background: var(--c, #ffb300);
+  box-shadow: 0 0 22px 6px var(--c, #ffb300);
+  pointer-events: none;
+  opacity: 0;
+  animation: mc-flash-pop var(--d, 300ms) steps(5, end) forwards;
+}
+
+@keyframes mc-flash-pop {
+  0%   { transform: scale(.3); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ==========================================================
+   6. 减少动态效果
    ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
